@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Genre extends Model
 {
-    protected $fillable = ['title'];
+    protected $fillable = ['title', 'user_id'];
 
     /**
      * @return BelongsToMany

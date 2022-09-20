@@ -14,10 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('game_genre', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('game_id');
-            $table->unsignedBigInteger('genre_id');
-            $table->timestamps();
+            $table->foreignId('game_id');
+            $table->foreignId('genre_id');
+            $table->unique(['game_id', 'genre_id']);
         });
     }
 

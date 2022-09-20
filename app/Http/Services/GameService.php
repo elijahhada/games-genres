@@ -4,46 +4,36 @@ namespace App\Http\Services;
 
 use App\Models\Game;
 use App\Models\Genre;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class GameService
 {
-    public function paginate(string $count)
+    public function paginate()
     {
-        return Game::with('genres')->paginate($count);
+        return Game::with('genres')->paginate();
     }
 
     public function store(array $data)
     {
+        $data['user_id'] = Auth::user()->id;
         $game = Game::create($data);
-        return $this->associate($game, $data['genres']);
+        $game->genres()->sync($data['genres']);
+        return $game->id;
     }
 
     public function update(Game $game, array $data)
     {
+        Gate::authorize('update', $game);
         $game->update($data);
-        return $this->associate($game, $data['genres']);
+        $game->genres()->sync($data['genres']);
+        return $game->id;
     }
 
     public function destroy(Game $game)
     {
+        Gate::authorize('delete', $game);
         $game->genres()->detach();
         $game->delete();
-    }
-
-    public function associate(Game $game, string $genres)
-    {
-        $genresIds = [];
-        foreach (explode(',', $genres) as $genreTitle) {
-            $genre = $game::where('title', $genreTitle)->first();
-            if($genre) {
-                array_push($genresIds, $genre->id);
-                continue;
-            }
-            $tag = Genre::create(['title' => $genreTitle]);
-            array_push($genresIds, $tag->id);
-        }
-        $game->genres()->sync($genresIds);
-
-        return $game->id;
     }
 }

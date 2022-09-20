@@ -18,3 +18,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::apiResource('games', \App\Http\Controllers\Api\GamesController::class);
+Route::apiResource('genres', \App\Http\Controllers\Api\GenreController::class);
+Route::post('register', [\App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);

@@ -7,20 +7,22 @@ use App\Http\Requests\GameRequest;
 use App\Http\Resources\GameResource;
 use App\Http\Services\GameService;
 use App\Models\Game;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class GamesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     /**
-     * @param Request $request
      * @param GameService $service
      * @return AnonymousResourceCollection
      */
-    public function index(Request $request, GameService $service): AnonymousResourceCollection
+    public function index(GameService $service): AnonymousResourceCollection
     {
-        return GameResource::collection($service->paginate($request->get('count') ?? 3));
+        return GameResource::collection($service->paginate());
     }
 
     /**
